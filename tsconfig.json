@@ -22,11 +22,7 @@
     "types": ["vitest/globals", "@testing-library/jest-dom"],
     "noImplicitAny": true,
     /* Absolute Imports */
-    "baseUrl": "./",
-    "paths": {
-      "@/Assets/*": ["*", "src/Assets/*"],
-      "@/Components/*": ["*", "src/Components/*"]
-    }
+    "baseUrl": "./"
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

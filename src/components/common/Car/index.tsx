@@ -16,7 +16,7 @@ export default function Car({ index, car }: { index: number; car: CarInterface }
   const carRef = useRef<HTMLDivElement>(null);
   const { setGarage, garage } = useContext(AppContext);
   const [canStart, setCanStart] = useState(true);
-  console.log(`car`, car);
+
   const animateCar = (second: number) => {
     if (carRef.current) {
       if (second === 0) {
@@ -46,6 +46,7 @@ export default function Car({ index, car }: { index: number; car: CarInterface }
       }));
     } catch (error) {
       const errorMsg = (error as { message: string }).message;
+
       setGarage((prev) => ({ ...prev, loading: false, error: errorMsg }));
     }
   };
@@ -54,7 +55,7 @@ export default function Car({ index, car }: { index: number; car: CarInterface }
     try {
       setGarage((prev) => ({ ...prev, loading: true }));
 
-      const response = await engineService.switchToDriveMode(id);
+      await engineService.switchToDriveMode(id);
       await engineService.stopEngine(id);
 
       setGarage((prev) => ({
@@ -65,7 +66,6 @@ export default function Car({ index, car }: { index: number; car: CarInterface }
         loading: false,
         error: null,
       }));
-      console.log(`log(id, response)`, id, response);
     } catch (error) {
       if ((error as AxiosError).response?.status === 500) {
         setGarage((prev) => ({
@@ -78,7 +78,6 @@ export default function Car({ index, car }: { index: number; car: CarInterface }
         }));
         await engineService.stopEngine(id);
       }
-      console.log(`log(id, error)`, id, error);
     }
   };
 
@@ -104,7 +103,6 @@ export default function Car({ index, car }: { index: number; car: CarInterface }
           error: null,
         }));
         const time = calculateTime(currentCarRaceData.velocity, currentCarRaceData.distance);
-        console.log(`log(time, currentCarRaceData)`, time, currentCarRaceData);
         animateCar(time);
         controlCarDrive(id);
       } else {
@@ -119,12 +117,10 @@ export default function Car({ index, car }: { index: number; car: CarInterface }
 
   useEffect(() => {
     const currentCarRaceData = garage.raceData.find((item) => item.carId === car.id);
-    console.log('engine_updated(id, currentCarRaceData)', car.id, currentCarRaceData);
     if (currentCarRaceData?.status === EngineStatusEnum.BROKEN) {
       animateCar(-1);
     } else if (currentCarRaceData?.status === EngineStatusEnum.STARTED) {
       const time = calculateTime(currentCarRaceData.velocity, currentCarRaceData.distance);
-      console.log(`log(time, currentCarRaceData)`, time, currentCarRaceData);
       animateCar(time);
       controlCarDrive(car.id);
     }
@@ -138,7 +134,6 @@ export default function Car({ index, car }: { index: number; car: CarInterface }
     const saveWinnerRecord = async () => {
       const winnerData = garage.raceData.find((item) => item.carId === car.id);
       const time = parseInt(calculateTime(winnerData?.velocity || 0, winnerData?.distance || 0).toFixed(0), 10);
-      console.log(`log(winnerData, time)`, winnerData, time);
       try {
         const winner = await winnerService.get(car.id);
 

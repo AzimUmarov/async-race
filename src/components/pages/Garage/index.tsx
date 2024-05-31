@@ -19,18 +19,13 @@ export default function Garage() {
 
         const response = await garageService.getAll(garage.page);
 
-        console.log('res', response, setGarage);
-
         setGarage((prev) => {
-          console.log('state updating');
-
           const newState = {
             ...prev,
             cars: response.data || [],
             loading: false,
             totalCount: response?.totalCount || 0,
           };
-          console.log('newState', newState);
 
           return newState;
         });
