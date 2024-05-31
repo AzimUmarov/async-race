@@ -1,11 +1,46 @@
-import './style.scss';
-import { Container } from 'react-bootstrap';
+import { Container, Spinner } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
+import { useContext, useEffect } from 'react';
 import MainLayout from '../../layout/MainLayout';
-import carImage from '../../../assets/images/car.svg';
 import Pagination from '../../common/Pagination';
+import { AppContext } from '../../../context';
+import winnerService from '../../../services/winnerService';
+import garageService from '../../../services/garageService';
+import CarObject from '../../common/CarObject';
 
 export default function Winner() {
+  const { winner, setWinner } = useContext(AppContext);
+
+  useEffect(() => {
+    const fetchWinners = async () => {
+      try {
+        setWinner((prev) => ({ ...prev, loading: true, error: null }));
+
+        const response = await winnerService.getAll(winner.page);
+        const winnerCarsPromises = response?.data.map(async (_winner) => garageService.get(_winner?.id || 0));
+        const winnerCars = await Promise.all(winnerCarsPromises);
+        const winnersCarsFinal = response.data.map((_winner, index) => ({
+          ..._winner,
+          car: winnerCars[index],
+        }));
+        console.log('winners', winnersCarsFinal);
+
+        setWinner((prev) => ({
+          ...prev,
+          winners: winnersCarsFinal,
+          loading: false,
+          error: null,
+          totalCount: response?.totalCount || 0,
+        }));
+      } catch (error) {
+        const errorMsg = (error as { message: string }).message;
+
+        setWinner((prev) => ({ ...prev, loading: false, error: errorMsg }));
+      }
+    };
+    fetchWinners();
+  }, [winner.page, setWinner]);
+
   return (
     <MainLayout>
       <Container>
@@ -22,27 +57,34 @@ export default function Winner() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td aria-label="Car">
-                <img style={{ height: '36px' }} src={carImage} alt="car" />
-              </td>
-              <td>Otto</td>
-              <td>@mdo</td>
-              <td>@mdo</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td aria-label="Car">
-                <img style={{ height: '36px' }} src={carImage} alt="car" />
-              </td>
-              <td>Otto</td>
-              <td>@mdo</td>
-              <td>@mdo</td>
-            </tr>
+            {winner.loading && (
+              <tr>
+                <td colSpan={5} className="text-center" aria-label="loading">
+                  <Spinner animation="grow" className="mx-auto" />
+                </td>
+              </tr>
+            )}
+
+            {winner?.winners?.map((_winner, index) => (
+              <tr>
+                <td>{index + 1}</td>
+                <td aria-label="Car">
+                  <CarObject className="car-object" color={_winner.car.color} />
+                </td>
+                <td>{_winner.car.name}</td>
+                <td>{_winner.wins}</td>
+                <td>{_winner.time}</td>
+              </tr>
+            ))}
           </tbody>
         </Table>
-        <Pagination />
+        <Pagination
+          page={winner.page}
+          totalCount={winner.totalCount}
+          onPageChange={(page: number) => {
+            setWinner((prev) => ({ ...prev, page }));
+          }}
+        />
       </Container>
     </MainLayout>
   );
