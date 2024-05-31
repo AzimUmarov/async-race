@@ -43,7 +43,7 @@ export default function Garage() {
       <ControlPanel />
       <Container className="p-0 garage">
         <Row>
-          <Col xs={11} className="garage__cars">
+          <Col xs={10} sm={11} className="garage__cars">
             {garage.cars.map((car, index) => (
               <Col key={car.id}>
                 <Car car={car} index={index} />
@@ -51,7 +51,7 @@ export default function Garage() {
             ))}
           </Col>
 
-          <Col xs={1} className="garage__finish">
+          <Col xs={2} sm={1} className="garage__finish">
             <RaceLine />
           </Col>
         </Row>

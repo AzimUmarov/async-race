@@ -104,6 +104,7 @@ export default function Car({ index, car }: { index: number; car: CarInterface }
           error: null,
         }));
         const time = calculateTime(currentCarRaceData.velocity, currentCarRaceData.distance);
+
         animateCar(time);
         controlCarDrive(id);
       } else {
@@ -120,10 +121,12 @@ export default function Car({ index, car }: { index: number; car: CarInterface }
 
   useEffect(() => {
     const currentCarRaceData = garage.raceData.find((item) => item.carId === car.id);
+
     if (currentCarRaceData?.status === EngineStatusEnum.BROKEN) {
       animateCar(-1);
     } else if (currentCarRaceData?.status === EngineStatusEnum.STARTED) {
       const time = calculateTime(currentCarRaceData.velocity, currentCarRaceData.distance);
+
       animateCar(time);
       controlCarDrive(car.id);
     }

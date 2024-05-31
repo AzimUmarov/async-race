@@ -17,7 +17,6 @@ export default function ControlPanel() {
 
   useEffect(() => {
     if (selectedCar) {
-      console.log(`selectedCar`, selectedCar);
       setInputState((prev) => ({ ...prev, carUpdate: { name: selectedCar.name, color: selectedCar.color } }));
     }
   }, [selectedCar, setInputState]);
@@ -69,8 +68,6 @@ export default function ControlPanel() {
         name: inputState.carUpdate.name,
         color: inputState.carUpdate.color,
       };
-
-      console.log(payload);
 
       if (payload.name === '' || payload.color === '') {
         toast.error('Please fill in all fields');
@@ -129,19 +126,11 @@ export default function ControlPanel() {
 
   function handleRace() {
     async function startRace() {
-      console.log('started');
-
       try {
         setCanRace(false);
         setGarage((prev) => ({ ...prev, loading: true, raceWinner: null, error: null }));
         const carStartPromises = garage.cars.map((car) => engineService.startEngine(car.id));
         const carStartResults = await Promise.all(carStartPromises);
-
-        console.log(`handleRace(carStartResults)`, carStartResults, {
-          ...carStartResults[0].data,
-          status: EngineStatusEnum.STARTED,
-          carId: garage.cars[0].id,
-        });
 
         setGarage((prev) => ({
           ...prev,
