@@ -1,0 +1,17 @@
+.garage {
+  border: 0.56em #ff0000 dashed;
+  margin: 1em 0;
+  border-left: none;
+  border-right: none;
+
+  &__cars {
+    padding: 1em 0 1em 1em !important;
+  }
+
+  &__finish {
+    display: flex;
+    align-items: center;
+    padding: 1em 1em 1em 0 !important;
+    position: static;
+  }
+}

@@ -1,0 +1,62 @@
+.finish {
+  border: #000 2px solid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(90deg) translateY(290px);
+
+  &__line {
+    width: 43em;
+    height: 20px;
+    background-color: #ffffff;
+    left: 0;
+
+    background-image: -webkit-linear-gradient(
+      0deg,
+      #ffffff 12.5%,
+      black 12.51%,
+      black 25%,
+      #ffffff 25.01%,
+      #ffffff 37.5%,
+      black 37.51%,
+      black 50%,
+      #ffffff 50.01%,
+      #ffffff 62.5%,
+      black 62.51%,
+      black 75%,
+      #ffffff 75.01%,
+      #ffffff 87.5%,
+      black 87.51%,
+      black 100%,
+      #ffffff 75.01%,
+      #ffffff 87.5%,
+      black 87.51%,
+      black 100%,
+      #ffffff 75.01%,
+      #ffffff 87.5%,
+      black 87.51%,
+      black 100%,
+      #ffffff 75.01%,
+      #ffffff 87.5%,
+      black 87.51%,
+      black 100%
+    );
+    background-size: 160px 20px;
+  }
+
+  &__line:nth-child(1) {
+    background-position: 20px 0px;
+  }
+
+  &__text {
+    position: absolute;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #000000;
+    background: #f8faf8;
+    padding: 0.1em;
+    text-align: center;
+    letter-spacing: 0.1em;
+  }
+}

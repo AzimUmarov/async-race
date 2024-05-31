@@ -1,0 +1,31 @@
+.sub-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f8f9fa;
+
+  &__control-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  &__create-buttons,
+  &__update-buttons,
+  &__generate-cars {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    input[type='text'] {
+      padding: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    input[type='color'] {
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
