@@ -5,10 +5,11 @@ interface PaginationProps {
   totalCount: number;
   page: number;
   onPageChange: any;
+  limit: number;
 }
 
-export default function Pagination({ totalCount, page, onPageChange }: PaginationProps) {
-  const totalPages = Math.ceil(totalCount / 7);
+export default function Pagination({ totalCount, page, onPageChange, limit = 7 }: PaginationProps) {
+  const totalPages = Math.ceil(totalCount / limit);
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       onPageChange(newPage);

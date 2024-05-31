@@ -35,6 +35,7 @@ export default function Car({ index, car }: { index: number; car: CarInterface }
       setGarage((prev) => ({ ...prev, loading: true }));
 
       await garageService.delete(id);
+      await winnerService.delete(id);
       const response = await garageService.getAll(garage.page);
 
       setGarage((prev) => ({
@@ -106,8 +107,10 @@ export default function Car({ index, car }: { index: number; car: CarInterface }
         animateCar(time);
         controlCarDrive(id);
       } else {
+        await engineService.startEngine(id);
         setGarage((prev) => ({ ...prev, raceData: prev.raceData.filter((item) => item.carId !== id) }));
         setCanStart(true);
+        await engineService.startEngine(id);
       }
     } catch (error) {
       const errorMsg = (error as { message: string }).message;

@@ -1,29 +1,32 @@
 import { Container, Spinner } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import MainLayout from '../../layout/MainLayout';
 import Pagination from '../../common/Pagination';
 import { AppContext } from '../../../context';
 import winnerService from '../../../services/winnerService';
 import garageService from '../../../services/garageService';
 import CarObject from '../../common/CarObject';
+import { OrderEnum, SortEnum } from '../../../enums/winnerEnums';
+import './style.scss';
 
 export default function Winner() {
   const { winner, setWinner } = useContext(AppContext);
+  const [sort, setSort] = useState(SortEnum.ID);
+  const [order, setOrder] = useState(OrderEnum.ASC);
 
   useEffect(() => {
     const fetchWinners = async () => {
       try {
         setWinner((prev) => ({ ...prev, loading: true, error: null }));
 
-        const response = await winnerService.getAll(winner.page);
+        const response = await winnerService.getAll(winner.page, 10, sort, order);
         const winnerCarsPromises = response?.data.map(async (_winner) => garageService.get(_winner?.id || 0));
         const winnerCars = await Promise.all(winnerCarsPromises);
         const winnersCarsFinal = response.data.map((_winner, index) => ({
           ..._winner,
           car: winnerCars[index],
         }));
-        console.log('winners', winnersCarsFinal);
 
         setWinner((prev) => ({
           ...prev,
@@ -39,13 +42,34 @@ export default function Winner() {
       }
     };
     fetchWinners();
-  }, [winner.page, setWinner]);
+  }, [winner.page, setWinner, sort, order]);
 
   return (
     <MainLayout>
       <Container>
-        <h1 className="text-center p-1 mb-3 text-bg-info">Winners</h1>
+        <div className="table-container">
+          <div className="table-container__title">
+            <h1 className="text-center p-1 mb-3 ">Winners</h1>
+          </div>
 
+          <div className="table-container__filter">
+            <div>
+              <span>Order By: </span>
+              <select name="order" value={order} onChange={(e) => setOrder(e.target.value as OrderEnum)}>
+                <option value={OrderEnum.ASC}>ASC</option>
+                <option value={OrderEnum.DESC}>DESC</option>
+              </select>
+            </div>
+            <div>
+              <span>Sort By: </span>
+              <select name="sort" value={sort} onChange={(e) => setSort(e.target.value as SortEnum)}>
+                <option value={SortEnum.ID}>id</option>
+                <option value={SortEnum.WINS}>wins</option>
+                <option value={SortEnum.TIME}>time</option>
+              </select>
+            </div>
+          </div>
+        </div>
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -65,9 +89,9 @@ export default function Winner() {
               </tr>
             )}
 
-            {winner?.winners?.map((_winner, index) => (
+            {winner?.winners?.map((_winner) => (
               <tr>
-                <td>{index + 1}</td>
+                <td>{_winner.id}</td>
                 <td aria-label="Car">
                   <CarObject className="car-object" color={_winner.car.color} />
                 </td>
@@ -79,6 +103,7 @@ export default function Winner() {
           </tbody>
         </Table>
         <Pagination
+          limit={10}
           page={winner.page}
           totalCount={winner.totalCount}
           onPageChange={(page: number) => {

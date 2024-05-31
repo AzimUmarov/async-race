@@ -1,6 +1,6 @@
 import React, { createContext, useState, useMemo, Dispatch, SetStateAction, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { Car, RaceData } from '../interfaces/carInterface';
+import { Car, NewCar, RaceData } from '../interfaces/carInterface';
 import { WinnerCars } from '../interfaces/winnerInterface';
 
 interface AppContextType {
@@ -8,6 +8,8 @@ interface AppContextType {
   setGarage: Dispatch<SetStateAction<GarageStateType>>;
   winner: WinnerStateType;
   setWinner: Dispatch<SetStateAction<WinnerStateType>>;
+  inputState: InputStateType;
+  setInputState: Dispatch<SetStateAction<InputStateType>>;
 }
 
 type GarageStateType = {
@@ -29,6 +31,11 @@ type WinnerStateType = {
   page: number;
 };
 
+type InputStateType = {
+  carCreate: NewCar;
+  carUpdate: NewCar;
+};
+
 const defaultGarageState: GarageStateType = {
   cars: [],
   raceData: [],
@@ -48,16 +55,30 @@ const defaultWinnerState: WinnerStateType = {
   page: 1,
 };
 
+const defaultInputState: InputStateType = {
+  carCreate: {
+    name: '',
+    color: '',
+  },
+  carUpdate: {
+    name: '',
+    color: '',
+  },
+};
+
 export const AppContext = createContext<AppContextType>({
   garage: defaultGarageState,
   setGarage: () => {},
   winner: defaultWinnerState,
   setWinner: () => {},
+  inputState: defaultInputState,
+  setInputState: () => {},
 });
 
 function AppContextProvider({ children }: { children: React.ReactNode }): JSX.Element {
   const [garage, setGarage] = useState<GarageStateType>(defaultGarageState);
   const [winner, setWinner] = useState<WinnerStateType>(defaultWinnerState);
+  const [inputState, setInputState] = useState<InputStateType>(defaultInputState);
 
   useEffect(() => {
     if (garage.error) {
@@ -65,7 +86,10 @@ function AppContextProvider({ children }: { children: React.ReactNode }): JSX.El
     }
   }, [garage.error]);
 
-  const value = useMemo(() => ({ garage, setGarage, winner, setWinner }), [garage, setGarage, winner, setWinner]);
+  const value = useMemo(
+    () => ({ garage, setGarage, winner, setWinner, inputState, setInputState }),
+    [garage, setGarage, winner, setWinner, inputState, setInputState],
+  );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

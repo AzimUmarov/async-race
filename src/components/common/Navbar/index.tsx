@@ -14,7 +14,7 @@ export default function Navbar() {
           <Button className="navbar__item--btn" variant="outline-primary" onClick={() => navigate('/')}>
             Garage
           </Button>
-          <Button className="navbar__item--btn" variant="outline-info" onClick={() => navigate('winners')}>
+          <Button className="navbar__item--btn" variant="outline-info" onClick={() => navigate('/winners')}>
             Winners
           </Button>
         </div>

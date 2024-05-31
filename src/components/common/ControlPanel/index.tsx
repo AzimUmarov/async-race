@@ -10,10 +10,17 @@ import { EngineStatusEnum } from '../../../enums/engineEnum';
 import { Car } from '../../../interfaces/carInterface';
 
 export default function ControlPanel() {
-  const { garage, setGarage } = useContext(AppContext);
+  const { garage, setGarage, inputState, setInputState } = useContext(AppContext);
   const [canRace, setCanRace] = useState(true);
 
   const selectedCar = garage.cars.find((car) => car.id === garage.selectedCarId);
+
+  useEffect(() => {
+    if (selectedCar) {
+      console.log(`selectedCar`, selectedCar);
+      setInputState((prev) => ({ ...prev, carUpdate: { name: selectedCar.name, color: selectedCar.color } }));
+    }
+  }, [selectedCar, setInputState]);
 
   useEffect(() => {
     setCanRace(true);
@@ -21,12 +28,11 @@ export default function ControlPanel() {
 
   async function handleCreateCar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = e.currentTarget;
 
     try {
       const payload = {
-        name: (e.currentTarget[0] as HTMLInputElement).value,
-        color: (e.currentTarget[1] as HTMLInputElement).value,
+        name: inputState.carCreate.name,
+        color: inputState.carCreate.color,
       };
 
       if (payload.name === '' || payload.color === '') {
@@ -40,7 +46,7 @@ export default function ControlPanel() {
         setGarage((prev) => ({ ...prev, cars: [...prev.cars, res] }));
       }
 
-      form.reset();
+      setInputState((prev) => ({ ...prev, carCreate: { name: '', color: '#000000' } }));
 
       toast.success('Car created');
     } catch (error) {
@@ -52,7 +58,6 @@ export default function ControlPanel() {
 
   async function handleUpdateCar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = e.currentTarget;
 
     try {
       if (typeof garage.selectedCarId !== 'number') {
@@ -61,8 +66,8 @@ export default function ControlPanel() {
       }
 
       const payload = {
-        name: (e.currentTarget[0] as HTMLInputElement).value,
-        color: (e.currentTarget[1] as HTMLInputElement).value,
+        name: inputState.carUpdate.name,
+        color: inputState.carUpdate.color,
       };
 
       console.log(payload);
@@ -79,7 +84,7 @@ export default function ControlPanel() {
         selectedCarId: null,
       }));
 
-      form.reset();
+      setInputState((prev) => ({ ...prev, carUpdate: { name: '', color: '#000000' } }));
 
       toast.success('Car updated');
     } catch (error) {
@@ -175,16 +180,42 @@ export default function ControlPanel() {
       </div>
 
       <form className="sub-navbar__create-buttons" onSubmit={handleCreateCar}>
-        <input placeholder="TYPE CAR BRAND" type="text" />
-        <input type="color" />
+        <input
+          placeholder="TYPE CAR BRAND"
+          type="text"
+          value={inputState.carCreate.name}
+          onChange={(e) =>
+            setInputState((prev) => ({ ...prev, carCreate: { ...prev.carCreate, name: e.target.value } }))
+          }
+        />
+        <input
+          type="color"
+          value={inputState.carCreate.color}
+          onChange={(e) =>
+            setInputState((prev) => ({ ...prev, carCreate: { ...prev.carCreate, color: e.target.value } }))
+          }
+        />
         <Button type="submit" variant="warning" disabled={garage.loading}>
           Create
         </Button>
       </form>
 
       <form className="sub-navbar__update-buttons" onSubmit={handleUpdateCar}>
-        <input placeholder="TYPE CAR BRAND" type="text" defaultValue={selectedCar?.name} />
-        <input type="color" defaultValue={selectedCar?.color} />
+        <input
+          placeholder="TYPE CAR BRAND"
+          type="text"
+          value={inputState.carUpdate.name}
+          onChange={(e) =>
+            setInputState((prev) => ({ ...prev, carUpdate: { ...prev.carUpdate, name: e.target.value } }))
+          }
+        />
+        <input
+          type="color"
+          value={inputState.carUpdate.color}
+          onChange={(e) =>
+            setInputState((prev) => ({ ...prev, carUpdate: { ...prev.carUpdate, color: e.target.value } }))
+          }
+        />
         <Button type="submit" variant="success" disabled={garage.loading}>
           Update
         </Button>

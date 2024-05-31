@@ -58,10 +58,11 @@ export default function Garage() {
       </Container>
 
       <Pagination
+        limit={7}
         totalCount={garage.totalCount}
         page={garage.page}
         onPageChange={(page: number) => {
-          setGarage((prev) => ({ ...prev, page }));
+          setGarage((prev) => ({ ...prev, raceData: [], page }));
         }}
       />
     </MainLayout>
