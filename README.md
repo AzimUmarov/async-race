@@ -2,7 +2,7 @@
 
 ## Deployed link
 
-[Go to site](https://github.com/rolling-scopes-school/tasks/blob/master/epam/async-race.md)
+[Go to site](http://async-race.azim.alfraganaz.uz)
 
 ## Calculated Score
 
