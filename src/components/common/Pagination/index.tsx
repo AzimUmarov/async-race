@@ -52,5 +52,10 @@ export default function Pagination({ totalCount, page, onPageChange }: Paginatio
     return items;
   };
 
-  return <PaginationBootstrap className="justify-content-end">{renderPaginationItems()}</PaginationBootstrap>;
+  return (
+    <div>
+      <div>Total Cars: {totalCount}</div>
+      <PaginationBootstrap className="justify-content-end">{renderPaginationItems()}</PaginationBootstrap>
+    </div>
+  );
 }
